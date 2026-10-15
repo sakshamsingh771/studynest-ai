@@ -7,6 +7,11 @@ const presetAmounts = asyncHandler(async (req, res) => {
   sendSuccess(res, { data: { presets: walletService.PRESET_AMOUNTS } });
 });
 
+const getBalance = asyncHandler(async (req, res) => {
+  const data = await walletService.getBalance(req.user._id);
+  sendSuccess(res, { data });
+});
+
 const initiateTopup = asyncHandler(async (req, res) => {
   const amount = Number(req.body.amount);
   const result = await walletService.initiateTopup({ userId: req.user._id, amount });
@@ -18,10 +23,13 @@ const verifyTopup = asyncHandler(async (req, res) => {
   if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
     throw new AppError("Missing payment verification fields.", 400, "VALIDATION_ERROR");
   }
-  const topup = await walletService.verifyTopup({
-    userId: req.user._id, orderId: razorpay_order_id, paymentId: razorpay_payment_id, signature: razorpay_signature,
+  const result = await walletService.verifyTopup({
+    userId: req.user._id,
+    orderId: razorpay_order_id,
+    paymentId: razorpay_payment_id,
+    signature: razorpay_signature,
   });
-  sendSuccess(res, { data: { topup } });
+  sendSuccess(res, { data: result });
 });
 
-module.exports = { presetAmounts, initiateTopup, verifyTopup };
+module.exports = { presetAmounts, getBalance, initiateTopup, verifyTopup };

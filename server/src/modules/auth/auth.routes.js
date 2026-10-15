@@ -1,3 +1,4 @@
+
 const express = require("express");
 const controller = require("./auth.controller");
 const { protect } = require("../../middleware/auth");
@@ -12,5 +13,7 @@ router.post("/logout", protect, controller.logout);
 router.get("/me", protect, controller.me);
 router.post("/forgot-password", authLimiter, controller.forgotPassword);
 router.post("/reset-password", authLimiter, controller.resetPassword);
+router.post("/verify-email", authLimiter, controller.verifyEmail);
+router.post("/resend-verification", protect, authLimiter, controller.resendVerificationEmail);
 
 module.exports = router;
