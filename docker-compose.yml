@@ -1,0 +1,46 @@
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    # Exposed to the host for convenience (e.g. connecting Compass locally).
+    # Not required by the other containers — they reach Mongo via the internal
+    # Docker network at hostname "mongo", not this published port.
+    ports:
+      - "27017:27017"
+
+  server:
+    build: ./server
+    restart: unless-stopped
+    # Secrets (JWT keys, OPENAI_API_KEY, RAZORPAY keys) come from server/.env —
+    # copy server/.env.example there first. The three vars below are
+    # deliberately overridden here because their correct values depend on how
+    # the containers talk to each other / the outside world, not on secrets.
+    env_file:
+      - ./server/.env
+    environment:
+      MONGO_URI: mongodb://mongo:27017/studynest
+      CLIENT_URL: http://localhost
+      API_ORIGIN: http://localhost
+    depends_on:
+      - mongo
+    volumes:
+      - uploads_data:/app/uploads
+    expose:
+      - "5000"
+
+  client:
+    build:
+      context: ./client
+      args:
+        VITE_API_URL: /api
+    restart: unless-stopped
+    depends_on:
+      - server
+    ports:
+      - "80:80"
+
+volumes:
+  mongo_data:
+  uploads_data:

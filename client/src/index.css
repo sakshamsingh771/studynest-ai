@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #F7F8FC;
+  --surface: #FFFFFF;
+  --text: #172033;
+  --text-secondary: #526078;
+  --border: #E2E8F0;
+  --accent: #4F46E5;
+}
+
+.dark {
+  --bg: #0B1020;
+  --surface: #121A2B;
+  --text: #F1F5F9;
+  --text-secondary: #B8C4D6;
+  --border: #334155;
+  --accent: #A5B4FC;
+}
+
+body {
+  @apply font-body antialiased transition-colors duration-200;
+  background: var(--bg);
+  color: var(--text);
+}
+
+h1, h2, h3, h4 {
+  @apply font-display;
+  color: var(--text);
+}
+
+.input {
+  @apply w-full rounded-lg border px-3 py-2 text-sm disabled:opacity-50;
+  border-color: var(--border);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+/* Ensure links and buttons remain readable */
+a {
+  color: inherit;
+}
